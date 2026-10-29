@@ -48,6 +48,29 @@ namespace LeaveManagementEFCore.Migrations
 
                     b.ToTable("Employees");
                 });
+
+            modelBuilder.Entity("LeaveManagementEFCore.Models.LeaveType", b =>
+                {
+                    b.Property<int>("LeaveTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveTypeId"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LeaveTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaximumDays")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeaveTypeId");
+
+                    b.ToTable("LeaveTypes");
+                });
 #pragma warning restore 612, 618
         }
     }
