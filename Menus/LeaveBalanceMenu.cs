@@ -1,6 +1,7 @@
 ﻿
 using LeaveManagementEFCore.Models;
 using LeaveManagementEFCore.Services;
+using LeaveManagementEFCore.Helpers;
 
 namespace LeaveManagementEFCore.Menus;
 
@@ -24,9 +25,8 @@ public class LeaveBalanceMenu
             Console.WriteLine("4. Update Leave Balance");
             Console.WriteLine("5. Delete Leave Balance");
             Console.WriteLine("6. Back");
-            Console.Write("Enter your choice: ");
 
-            string? choice = Console.ReadLine();
+            string choice = ConsoleHelper.ReadRequiredInput("Enter your choice: ");
 
             switch (choice)
             {
@@ -62,17 +62,32 @@ public class LeaveBalanceMenu
 
     private async Task AddLeaveBalanceAsync()
     {
-        Console.Write("Enter Employee ID: ");
-        int employeeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Employee ID: ", out int employeeId))
+        {
+            return;
+        }
 
-        Console.Write("Enter Leave Type ID: ");
-        int leaveTypeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Type ID: ", out int leaveTypeId))
+        {
+            return;
+        }
 
         Console.Write("Enter Total Days: ");
-        int totalDays = Convert.ToInt32(Console.ReadLine());
+
+        if (!int.TryParse(Console.ReadLine(), out int totalDays) || totalDays < 0)
+        {
+            Console.WriteLine("Invalid total days. Enter zero or a positive number.");
+            return;
+        }
 
         Console.Write("Enter Used Days: ");
-        int usedDays = Convert.ToInt32(Console.ReadLine());
+
+        if (!int.TryParse(Console.ReadLine(), out int usedDays) ||
+            usedDays < 0 || usedDays > totalDays)
+        {
+            Console.WriteLine("Invalid used days. Used days must be between zero and total days.");
+            return;
+        }
 
         int remainingDays = totalDays - usedDays;
 
@@ -109,8 +124,10 @@ public class LeaveBalanceMenu
 
     private async Task ViewLeaveBalanceByIdAsync()
     {
-        Console.Write("Enter Leave Balance ID: ");
-        int leaveBalanceId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Balance ID: ", out int leaveBalanceId))
+        {
+            return;
+        }
 
         LeaveBalance? leaveBalance =
             await _leaveBalanceService.GetLeaveBalanceByIdAsync(leaveBalanceId);
@@ -126,8 +143,10 @@ public class LeaveBalanceMenu
 
     private async Task UpdateLeaveBalanceAsync()
     {
-        Console.Write("Enter Leave Balance ID to update: ");
-        int leaveBalanceId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Balance ID to update: ", out int leaveBalanceId))
+        {
+            return;
+        }
 
         LeaveBalance? leaveBalance =
             await _leaveBalanceService.GetLeaveBalanceByIdAsync(leaveBalanceId);
@@ -138,20 +157,38 @@ public class LeaveBalanceMenu
             return;
         }
 
-        Console.Write("Enter new Employee ID: ");
-        leaveBalance.EmployeeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter new Employee ID: ", out int employeeId))
+        {
+            return;
+        }
 
-        Console.Write("Enter new Leave Type ID: ");
-        leaveBalance.LeaveTypeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter new Leave Type ID: ", out int leaveTypeId))
+        {
+            return;
+        }
 
         Console.Write("Enter new Total Days: ");
-        leaveBalance.TotalDays = Convert.ToInt32(Console.ReadLine());
+
+        if (!int.TryParse(Console.ReadLine(), out int totalDays) || totalDays < 0)
+        {
+            Console.WriteLine("Invalid total days. Enter zero or a positive number.");
+            return;
+        }
 
         Console.Write("Enter new Used Days: ");
-        leaveBalance.UsedDays = Convert.ToInt32(Console.ReadLine());
 
-        leaveBalance.RemainingDays =
-            leaveBalance.TotalDays - leaveBalance.UsedDays;
+        if (!int.TryParse(Console.ReadLine(), out int usedDays) ||
+            usedDays < 0 || usedDays > totalDays)
+        {
+            Console.WriteLine("Invalid used days. Used days must be between zero and total days.");
+            return;
+        }
+
+        leaveBalance.EmployeeId = employeeId;
+        leaveBalance.LeaveTypeId = leaveTypeId;
+        leaveBalance.TotalDays = totalDays;
+        leaveBalance.UsedDays = usedDays;
+        leaveBalance.RemainingDays = totalDays - usedDays;
 
         await _leaveBalanceService.UpdateLeaveBalanceAsync(leaveBalance);
 
@@ -160,8 +197,10 @@ public class LeaveBalanceMenu
 
     private async Task DeleteLeaveBalanceAsync()
     {
-        Console.Write("Enter Leave Balance ID to delete: ");
-        int leaveBalanceId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Balance ID to delete: ", out int leaveBalanceId))
+        {
+            return;
+        }
 
         LeaveBalance? leaveBalance =
             await _leaveBalanceService.GetLeaveBalanceByIdAsync(leaveBalanceId);

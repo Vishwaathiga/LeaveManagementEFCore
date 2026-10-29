@@ -1,6 +1,7 @@
 ﻿
 using LeaveManagementEFCore.Models;
 using LeaveManagementEFCore.Services;
+using LeaveManagementEFCore.Helpers;
 
 namespace LeaveManagementEFCore.Menus;
 
@@ -24,9 +25,8 @@ public class LeaveRequestMenu
             Console.WriteLine("4. Update Leave Request");
             Console.WriteLine("5. Delete Leave Request");
             Console.WriteLine("6. Back");
-            Console.Write("Enter your choice: ");
 
-            string? choice = Console.ReadLine();
+            string choice = ConsoleHelper.ReadRequiredInput("Enter your choice: ");
 
             switch (choice)
             {
@@ -62,20 +62,39 @@ public class LeaveRequestMenu
 
     private async Task AddLeaveRequestAsync()
     {
-        Console.Write("Enter Employee ID: ");
-        int employeeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Employee ID: ", out int employeeId))
+        {
+            return;
+        }
 
-        Console.Write("Enter Leave Type ID: ");
-        int leaveTypeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Type ID: ", out int leaveTypeId))
+        {
+            return;
+        }
 
         Console.Write("Enter Start Date (yyyy-MM-dd): ");
-        DateTime startDate = Convert.ToDateTime(Console.ReadLine());
+
+        if (!DateTime.TryParse(Console.ReadLine(), out DateTime startDate))
+        {
+            Console.WriteLine("Invalid start date.");
+            return;
+        }
 
         Console.Write("Enter End Date (yyyy-MM-dd): ");
-        DateTime endDate = Convert.ToDateTime(Console.ReadLine());
 
-        Console.Write("Enter Reason: ");
-        string reason = Console.ReadLine() ?? string.Empty;
+        if (!DateTime.TryParse(Console.ReadLine(), out DateTime endDate))
+        {
+            Console.WriteLine("Invalid end date.");
+            return;
+        }
+
+        string reason = ConsoleHelper.ReadRequiredInput("Enter Reason: ");
+
+        if (endDate.Date < startDate.Date)
+        {
+            Console.WriteLine("End date cannot be earlier than start date.");
+            return;
+        }
 
         LeaveRequest leaveRequest = new LeaveRequest
         {
@@ -112,8 +131,10 @@ public class LeaveRequestMenu
 
     private async Task ViewLeaveRequestByIdAsync()
     {
-        Console.Write("Enter Leave Request ID: ");
-        int leaveRequestId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Request ID: ", out int leaveRequestId))
+        {
+            return;
+        }
 
         LeaveRequest? leaveRequest =
             await _leaveRequestService.GetLeaveRequestByIdAsync(leaveRequestId);
@@ -129,8 +150,10 @@ public class LeaveRequestMenu
 
     private async Task UpdateLeaveRequestAsync()
     {
-        Console.Write("Enter Leave Request ID to update: ");
-        int leaveRequestId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Request ID to update: ", out int leaveRequestId))
+        {
+            return;
+        }
 
         LeaveRequest? leaveRequest =
             await _leaveRequestService.GetLeaveRequestByIdAsync(leaveRequestId);
@@ -141,23 +164,53 @@ public class LeaveRequestMenu
             return;
         }
 
-        Console.Write("Enter new Employee ID: ");
-        leaveRequest.EmployeeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter new Employee ID: ", out int employeeId))
+        {
+            return;
+        }
 
-        Console.Write("Enter new Leave Type ID: ");
-        leaveRequest.LeaveTypeId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter new Leave Type ID: ", out int leaveTypeId))
+        {
+            return;
+        }
 
         Console.Write("Enter new Start Date (yyyy-MM-dd): ");
-        leaveRequest.StartDate = Convert.ToDateTime(Console.ReadLine());
+
+        if (!DateTime.TryParse(Console.ReadLine(), out DateTime startDate))
+        {
+            Console.WriteLine("Invalid start date.");
+            return;
+        }
 
         Console.Write("Enter new End Date (yyyy-MM-dd): ");
-        leaveRequest.EndDate = Convert.ToDateTime(Console.ReadLine());
 
-        Console.Write("Enter new Reason: ");
-        leaveRequest.Reason = Console.ReadLine() ?? string.Empty;
+        if (!DateTime.TryParse(Console.ReadLine(), out DateTime endDate))
+        {
+            Console.WriteLine("Invalid end date.");
+            return;
+        }
 
-        Console.Write("Enter new Status (Pending/Approved/Rejected): ");
-        leaveRequest.Status = Console.ReadLine() ?? "Pending";
+        if (endDate.Date < startDate.Date)
+        {
+            Console.WriteLine("End date cannot be earlier than start date.");
+            return;
+        }
+
+        string reason = ConsoleHelper.ReadRequiredInput("Enter new Reason: ");
+        string status = ConsoleHelper.ReadRequiredInput("Enter new Status (Pending/Approved/Rejected): ");
+
+        if (status != "Pending" && status != "Approved" && status != "Rejected")
+        {
+            Console.WriteLine("Invalid status.");
+            return;
+        }
+
+        leaveRequest.EmployeeId = employeeId;
+        leaveRequest.LeaveTypeId = leaveTypeId;
+        leaveRequest.StartDate = startDate;
+        leaveRequest.EndDate = endDate;
+        leaveRequest.Reason = reason;
+        leaveRequest.Status = status;
 
         await _leaveRequestService.UpdateLeaveRequestAsync(leaveRequest);
 
@@ -166,8 +219,10 @@ public class LeaveRequestMenu
 
     private async Task DeleteLeaveRequestAsync()
     {
-        Console.Write("Enter Leave Request ID to delete: ");
-        int leaveRequestId = Convert.ToInt32(Console.ReadLine());
+        if (!ConsoleHelper.TryReadId("Enter Leave Request ID to delete: ", out int leaveRequestId))
+        {
+            return;
+        }
 
         LeaveRequest? leaveRequest =
             await _leaveRequestService.GetLeaveRequestByIdAsync(leaveRequestId);

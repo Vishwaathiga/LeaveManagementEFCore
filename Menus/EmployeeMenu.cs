@@ -1,10 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.Text;
-
-
 using LeaveManagementEFCore.Models;
 using LeaveManagementEFCore.Services;
+using LeaveManagementEFCore.Helpers;
 
 namespace LeaveManagementEFCore.Menus;
 
@@ -28,9 +27,8 @@ public class EmployeeMenu
             Console.WriteLine("4. Update Employee");
             Console.WriteLine("5. Delete Employee");
             Console.WriteLine("6. Back");
-            Console.Write("Enter your choice: ");
 
-            string? choice = Console.ReadLine();
+            string choice = ConsoleHelper.ReadRequiredInput("Enter your choice: ");
 
             switch (choice)
             {
@@ -66,14 +64,9 @@ public class EmployeeMenu
 
     private async Task AddEmployeeAsync()
     {
-        Console.Write("Enter employee name: ");
-        string name = Console.ReadLine() ?? "";
-
-        Console.Write("Enter email: ");
-        string email = Console.ReadLine() ?? "";
-
-        Console.Write("Enter department: ");
-        string department = Console.ReadLine() ?? "";
+        string name = ConsoleHelper.ReadRequiredInput("Enter employee name: ");
+        string email = ConsoleHelper.ReadRequiredInput("Enter email: ");
+        string department = ConsoleHelper.ReadRequiredInput("Enter department: ");
 
         Employee employee = new Employee
         {
@@ -107,11 +100,8 @@ public class EmployeeMenu
 
     private async Task ViewEmployeeByIdAsync()
     {
-        Console.Write("Enter employee ID: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int employeeId))
+        if (!ConsoleHelper.TryReadId("Enter employee ID: ", out int employeeId))
         {
-            Console.WriteLine("Invalid employee ID.");
             return;
         }
 
@@ -129,11 +119,8 @@ public class EmployeeMenu
 
     private async Task UpdateEmployeeAsync()
     {
-        Console.Write("Enter employee ID to update: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int employeeId))
+        if (!ConsoleHelper.TryReadId("Enter employee ID to update: ", out int employeeId))
         {
-            Console.WriteLine("Invalid employee ID.");
             return;
         }
 
@@ -177,11 +164,8 @@ public class EmployeeMenu
 
     private async Task DeleteEmployeeAsync()
     {
-        Console.Write("Enter employee ID to delete: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int employeeId))
+        if (!ConsoleHelper.TryReadId("Enter employee ID to delete: ", out int employeeId))
         {
-            Console.WriteLine("Invalid employee ID.");
             return;
         }
 
@@ -210,4 +194,3 @@ public class EmployeeMenu
         Console.WriteLine("----------------------------");
     }
 }
-

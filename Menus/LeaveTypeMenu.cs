@@ -1,10 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.Text;
-
-
 using LeaveManagementEFCore.Models;
 using LeaveManagementEFCore.Services;
+using LeaveManagementEFCore.Helpers;
 
 namespace LeaveManagementEFCore.Menus;
 
@@ -28,9 +27,8 @@ public class LeaveTypeMenu
             Console.WriteLine("4. Update Leave Type");
             Console.WriteLine("5. Delete Leave Type");
             Console.WriteLine("6. Back");
-            Console.Write("Enter your choice: ");
 
-            string? choice = Console.ReadLine();
+            string choice = ConsoleHelper.ReadRequiredInput("Enter your choice: ");
 
             switch (choice)
             {
@@ -66,14 +64,13 @@ public class LeaveTypeMenu
 
     private async Task AddLeaveTypeAsync()
     {
-        Console.Write("Enter leave type name: ");
-        string name = Console.ReadLine() ?? "";
+        string name = ConsoleHelper.ReadRequiredInput("Enter leave type name: ");
 
         Console.Write("Enter maximum days: ");
 
-        if (!int.TryParse(Console.ReadLine(), out int maximumDays))
+        if (!int.TryParse(Console.ReadLine(), out int maximumDays) || maximumDays <= 0)
         {
-            Console.WriteLine("Invalid number of days.");
+            Console.WriteLine("Invalid number of days. Enter a positive number.");
             return;
         }
 
@@ -108,11 +105,8 @@ public class LeaveTypeMenu
 
     private async Task ViewLeaveTypeByIdAsync()
     {
-        Console.Write("Enter leave type ID: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int leaveTypeId))
+        if (!ConsoleHelper.TryReadId("Enter leave type ID: ", out int leaveTypeId))
         {
-            Console.WriteLine("Invalid leave type ID.");
             return;
         }
 
@@ -130,11 +124,8 @@ public class LeaveTypeMenu
 
     private async Task UpdateLeaveTypeAsync()
     {
-        Console.Write("Enter leave type ID to update: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int leaveTypeId))
+        if (!ConsoleHelper.TryReadId("Enter leave type ID to update: ", out int leaveTypeId))
         {
-            Console.WriteLine("Invalid leave type ID.");
             return;
         }
 
@@ -160,9 +151,9 @@ public class LeaveTypeMenu
 
         if (!string.IsNullOrWhiteSpace(daysInput))
         {
-            if (!int.TryParse(daysInput, out int maximumDays))
+            if (!int.TryParse(daysInput, out int maximumDays) || maximumDays <= 0)
             {
-                Console.WriteLine("Invalid number of days.");
+                Console.WriteLine("Invalid number of days. Enter a positive number.");
                 return;
             }
 
@@ -176,11 +167,8 @@ public class LeaveTypeMenu
 
     private async Task DeleteLeaveTypeAsync()
     {
-        Console.Write("Enter leave type ID to delete: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int leaveTypeId))
+        if (!ConsoleHelper.TryReadId("Enter leave type ID to delete: ", out int leaveTypeId))
         {
-            Console.WriteLine("Invalid leave type ID.");
             return;
         }
 
@@ -208,4 +196,3 @@ public class LeaveTypeMenu
         Console.WriteLine("----------------------------");
     }
 }
-
