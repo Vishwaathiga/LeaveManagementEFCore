@@ -29,6 +29,11 @@ builder.Services.AddScoped<LeaveRequestRepository>();
 builder.Services.AddScoped<LeaveRequestService>();
 builder.Services.AddScoped<LeaveRequestMenu>();
 
+// Leave Balance Management
+builder.Services.AddScoped<LeaveBalanceRepository>();
+builder.Services.AddScoped<LeaveBalanceService>();
+builder.Services.AddScoped<LeaveBalanceMenu>();
+
 // Build the application
 using var host = builder.Build();
 
@@ -46,6 +51,10 @@ LeaveTypeMenu leaveTypeMenu =
 LeaveRequestMenu leaveRequestMenu =
     scope.ServiceProvider.GetRequiredService<LeaveRequestMenu>();
 
+// Get Leave Balance Menu
+LeaveBalanceMenu leaveBalanceMenu =
+    scope.ServiceProvider.GetRequiredService<LeaveBalanceMenu>();
+
 // Main Menu
 while (true)
 {
@@ -53,7 +62,8 @@ while (true)
     Console.WriteLine("1. Employee Management");
     Console.WriteLine("2. Leave Type Management");
     Console.WriteLine("3. Leave Request Management");
-    Console.WriteLine("4. Exit");
+    Console.WriteLine("4. Leave Balance Management");
+    Console.WriteLine("5. Exit");
     Console.Write("Enter your choice: ");
 
     string? choice = Console.ReadLine();
@@ -73,6 +83,10 @@ while (true)
             break;
 
         case "4":
+            await leaveBalanceMenu.ShowMenuAsync();
+            break;
+
+        case "5":
             return;
 
         default:
