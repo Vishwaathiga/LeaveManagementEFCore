@@ -50,6 +50,34 @@ namespace LeaveManagementEFCore.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("LeaveManagementEFCore.Models.LeaveBalance", b =>
+                {
+                    b.Property<int>("LeaveBalanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveBalanceId"));
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LeaveTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RemainingDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsedDays")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeaveBalanceId");
+
+                    b.ToTable("LeaveBalances");
+                });
+
             modelBuilder.Entity("LeaveManagementEFCore.Models.LeaveRequest", b =>
                 {
                     b.Property<int>("LeaveRequestId")

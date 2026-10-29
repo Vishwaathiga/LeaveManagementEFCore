@@ -16,4 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<LeaveType> LeaveTypes { get; set; }
 
     public DbSet<LeaveRequest> LeaveRequests { get; set; }
+
+    public DbSet<LeaveBalance> LeaveBalances { get; set; }
 }
+
+
