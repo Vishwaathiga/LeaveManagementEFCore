@@ -4,15 +4,20 @@ using LeaveManagementEFCore.Menus;
 using LeaveManagementEFCore.Repositories;
 using LeaveManagementEFCore.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 // Database connection
+string connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        "Server=.\\SQLEXPRESS;Database=LeaveManagementEFCoreDB;Trusted_Connection=True;TrustServerCertificate=True;"));
+    options.UseSqlServer(connectionString));
 
 // Employee Management
 builder.Services.AddScoped<EmployeeRepository>();
