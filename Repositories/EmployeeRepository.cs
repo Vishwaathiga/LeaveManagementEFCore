@@ -26,12 +26,16 @@ public class EmployeeRepository
 
     public async Task<List<Employee>> GetAllEmployeesAsync()
     {
-        return await _context.Employees.ToListAsync();
+        return await _context.Employees
+            .AsNoTracking()
+            .ToListAsync();
+            
     }
 
     public async Task<Employee?> GetEmployeeByIdAsync(int employeeId)
     {
         return await _context.Employees
+            .AsNoTracking()
             .FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
     }
 

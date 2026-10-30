@@ -28,6 +28,7 @@ public class LeaveBalanceRepository
     public async Task<LeaveBalance?> GetLeaveBalanceByIdAsync(int leaveBalanceId)
     {
         return await _context.LeaveBalances
+             .AsNoTracking()
             .FirstOrDefaultAsync(l => l.LeaveBalanceId == leaveBalanceId);
     }
 

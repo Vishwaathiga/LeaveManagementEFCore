@@ -22,7 +22,9 @@ public class LeaveRequestRepository
 
     public async Task<List<LeaveRequest>> GetAllLeaveRequestsAsync()
     {
-        return await _context.LeaveRequests.ToListAsync();
+        return await _context.LeaveRequests
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<LeaveRequest?> GetLeaveRequestByIdAsync(int leaveRequestId)

@@ -20,12 +20,4 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="docs\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Menus\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

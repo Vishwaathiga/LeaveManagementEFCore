@@ -26,7 +26,9 @@ public class LeaveTypeRepository
 
     public async Task<List<LeaveType>> GetAllLeaveTypesAsync()
     {
-        return await _context.LeaveTypes.ToListAsync();
+        return await _context.LeaveTypes
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<LeaveType?> GetLeaveTypeByIdAsync(int leaveTypeId)
