@@ -18,6 +18,8 @@ public class AppDbContext : DbContext
     public DbSet<LeaveRequest> LeaveRequests { get; set; }
 
     public DbSet<LeaveBalance> LeaveBalances { get; set; }
+
+    public DbSet<AuditLog> AuditLogs { get; set; }
 }
 
 

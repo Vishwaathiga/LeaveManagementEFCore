@@ -17,7 +17,6 @@ public class LeaveRequestRepository
     public async Task AddLeaveRequestAsync(LeaveRequest leaveRequest)
     {
         await _context.LeaveRequests.AddAsync(leaveRequest);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<List<LeaveRequest>> GetAllLeaveRequestsAsync()
