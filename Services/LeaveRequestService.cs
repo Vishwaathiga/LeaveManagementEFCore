@@ -72,10 +72,43 @@ public class LeaveRequestService
     }
 
     public async Task UpdateLeaveRequestAsync(
-        LeaveRequest leaveRequest)
+    LeaveRequest leaveRequest)
     {
-        await _leaveRequestRepository
-            .UpdateLeaveRequestAsync(leaveRequest);
+        using var transaction =
+            await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Update the leave request
+            await _leaveRequestRepository
+                .UpdateLeaveRequestAsync(leaveRequest);
+
+            // Create the audit log
+            AuditLog auditLog = new AuditLog
+            {
+                Action = "Updated",
+                EntityName = "LeaveRequest",
+                EntityId = leaveRequest.LeaveRequestId,
+                Details = $"Leave request updated for Employee ID: {leaveRequest.EmployeeId}",
+                ActionDate = DateTime.Now
+            };
+
+            // Add the audit log
+            await _context.AuditLogs.AddAsync(auditLog);
+
+            // Save the audit log
+            await _context.SaveChangesAsync();
+
+            // Commit both operations
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            // Roll back both operations if anything fails
+            await transaction.RollbackAsync();
+
+            throw;
+        }
     }
 
     public async Task DeleteLeaveRequestAsync(int leaveRequestId)
