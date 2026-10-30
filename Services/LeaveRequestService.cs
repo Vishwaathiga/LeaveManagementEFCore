@@ -113,7 +113,50 @@ public class LeaveRequestService
 
     public async Task DeleteLeaveRequestAsync(int leaveRequestId)
     {
-        await _leaveRequestRepository
-            .DeleteLeaveRequestAsync(leaveRequestId);
+        // Check whether the leave request exists
+        LeaveRequest? leaveRequest =
+            await _leaveRequestRepository
+                .GetLeaveRequestByIdAsync(leaveRequestId);
+
+        if (leaveRequest == null)
+        {
+            return;
+        }
+
+        using var transaction =
+            await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Delete the leave request
+            await _leaveRequestRepository
+                .DeleteLeaveRequestAsync(leaveRequestId);
+
+            // Create the audit log
+            AuditLog auditLog = new AuditLog
+            {
+                Action = "Deleted",
+                EntityName = "LeaveRequest",
+                EntityId = leaveRequest.LeaveRequestId,
+                Details = $"Leave request deleted for Employee ID: {leaveRequest.EmployeeId}",
+                ActionDate = DateTime.Now
+            };
+
+            // Add the audit log
+            await _context.AuditLogs.AddAsync(auditLog);
+
+            // Save the audit log
+            await _context.SaveChangesAsync();
+
+            // Commit both operations
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            // Roll back both operations if anything fails
+            await transaction.RollbackAsync();
+
+            throw;
+        }
     }
 }
